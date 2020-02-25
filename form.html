@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="formValidate.js"></script>
+</head>
+<body>
+<form action="display.html" method="post">
+	<fieldset>
+	<legend>Name:</legend>
+		<label for ="firstName">
+			<span> First Name :</span>
+			<strong>
+				<abbr title="required">*</abbr>
+			</strong>
+		</label>
+		<input type="text" name="" id="firstName" required/>
+	
+		<label for ="middleName">
+			<span>Middle Name :</span>
+		</label>
+		<input type="text" name="" id="middleName"/>
+	
+		<label for ="lastName">
+			<span>Last Name :</span>
+			<strong>
+				<abbr title="required">*</abbr>
+			</strong>
+		</label>
+		<input type="text" name="" id="lastName" required="text"/>
+	</fieldset>
+	<fieldset>
+		<legend>Mail: </legend>
+		<div>
+			<label for ="email">
+				<span>E-mail :</span>
+				<strong>
+					<abbr title="required">*</abbr>
+				</strong>
+			</label>
+			<input type="email" name="" id="email" required="email"/>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>Passport Details</legend>
+		<label for ="passportNumber">
+			<span>Passport Number :</span>
+			<strong>
+				<abbr title="required">*</abbr>
+			</strong>
+		</label>
+		<input type="text" name="" id="passportNumber" required="" pattern="^[A-Z]{1}[0-9]{7}" />
+		<label for="issueDate"> 
+			<span>Issue Date</span>
+			<strong>
+				<abbr title="required">*</abbr>
+			</strong>
+		</label>
+		<input type="date" name="" id="issueDate" required="date"/>
+		<label for = "expiryDate">
+			<span>Expiry Date :</span>
+			<strong>
+				<abbr title="required">*</abbr>
+			</strong>
+		 </label>
+		<input type="date" name="" id="expiryDate" required="date"/>
+	</fieldset>
+	<div id="fieldset">
+		<fieldset id="addressFeild">
+			<legend>Address Info.</legend>
+			<div class="field">
+				<label for="houseNo">
+					<span>House No./Street Name</span>
+				</label>
+				<input type="text" name="" id="houseNo" required="" minlength="6">
+			</div>
+			<div class="field">
+				<label for="village">
+					<span>Village/Town</span>
+				</label>
+				<input type="text" name="" id="village" required="" minlength="3">
+			</div>
+			<div class="field">
+				<label for="pinCode">
+					<span>Pin Code</span>
+				</label>
+				<input type="Number" name=""  id="pinCode" minlength="6" maxlength="6" required="Number">
+			</div>
+		</fieldset>
+	</div>
+	<div>
+		<input type="button" name="" value="Add Address" id="add" onclick="addAddress()">
+	</div>
+	<div>
+		<input type="submit" name="submit" value="Submit" id="submit" onclick="onSubmit()">
+	</div>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+    <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+    <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+    <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+    <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Todo List</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <style>
+            .action-btn {
+                float: right;
+                margin: auto 5px;
+            }
+            .mb-30 {
+                margin-bottom: 30px;
+            }
+            .todo-list-group {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="container">
+            <h1 class="text-center mb-30">Activity List</h1>
+            <div class="form-wrapper row justify-content-md-center">
+                <div class="col-md-6">
+                    <form
+                        id="addTodoForm"
+                        name="addTodoForm"
+                        onsubmit="onTodoFormSubmit(event)">
+                        <div class="input-group mb-3">
+                            <input
+                                onkeyup="validateAddTodoForm(event)"
+                                type="text"
+                                class="form-control"
+                                required
+                                name="todo"
+                                id="todoAddField"
+                                placeholder="Enter Activty"
+                                autofocus>
+                            <div class="input-group-append">
+                                <button
+                                    type="submit"
+                                    disabled
+                                    class="btn btn-success"
+                                    name="addTodoBtn"
+                                    id="addTodoBtn">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <ul id="todoList" class="todo-list-group list-group list-group-flush col-md-6"></ul>
+            </div>
+        </div>
+        <script>
+            const todoFormElement = document.forms.addTodoForm;
+            const addTodoBtn = document.getElementById('addTodoBtn')
+            const todoListView = document.getElementById('todoList');
+            let todoList = JSON.parse(localStorage.getItem('todoList')) || [];
+            const todoAddField = document.getElementById('todoAddField')
+            let editStatus = {
+                flag: false, // true => update, false => addition
+                index: 0 // represent index of todo which is being edited
+            };
+            createAndAppendTodos = (todo, index) => {
+                const listItem = document.createElement('li')
+                listItem.innerText = todo
+                listItem.setAttribute('id', 'todo' + index)
+                listItem.setAttribute('class', 'list-group-item')
+                todoListView.appendChild(listItem)
+            }
+            deleteTodo = (btn, index) => {
+                todoList.splice(index, 1);
+                localStorage.setItem('todoList', JSON.stringify(todoList))
+                btn.removeEventListener('click', deleteTodo)
+                btn.removeEventListener('click', editTodo)
+                renderTodos()
+            }
+            updateTodo = () => {
+                todoList[editStatus.index] = todoAddField.value
+                localStorage.setItem('todoList', JSON.stringify(todoList))
+                editStatus.flag = false
+                renderTodos()
+                todoAddField.focus()
+                addTodoBtn.innerText = 'Add'
+                todoFormElement.reset()
+            }
+            editTodo = (btn, index) => {
+                todoAddField.value = todoList[index]
+                editStatus = {
+                    flag: true,
+                    index
+                }
+                todoAddField.focus()
+                addTodoBtn.innerText = 'Update'
+            }
+            addBtnEventListener = (status, btn, index) => {
+                btn.addEventListener('click', () => {
+                    status === 'Delete' ? deleteTodo(btn, index) : editTodo(btn, index)
+                })
+            }
+            createAndAppendTodosAction = (status, index) => { // status => Delete, Edit
+                const listItem = document.getElementById(`todo${index}`)
+                const listItemText = listItem.innerText;
+                const btn = document.createElement('button')
+                btn.innerText = status
+                btn.setAttribute('id', listItemText + status + 'Btn' + index) // should be unique
+                btn.setAttribute('class', 'action-btn btn btn-' + (status === 'Delete' ? 'danger' : 'primary')) // should be unique
+                listItem.appendChild(btn)
+                addBtnEventListener(status, btn, index)
+            }
+            renderTodos = () => {
+                todoListView.innerHTML = ''; // make ul empty initally and then render
+                todoList.map((item, index) => {
+                    createAndAppendTodos(item, index)
+                    createAndAppendTodosAction('Delete', index)
+                    createAndAppendTodosAction('Edit', index)
+                })
+            }
+            validateAddTodoForm = (e) => {
+                addTodoBtn[!e.target.value ? 'setAttribute' : 'removeAttribute']('disabled', true);
+            }
+            addTodo = () => {
+                const formData = new FormData(todoFormElement);
+                const todo = formData.get('todo');
+                todoList.push(todo)
+                localStorage.setItem('todoList', JSON.stringify(todoList))
+                renderTodos()
+                todoFormElement.reset()
+            }
+            onTodoFormSubmit = (e) => {
+                e.preventDefault()
+                !editStatus.flag ? addTodo () : updateTodo()
+            }
+            init = () => {
+                if(todoList.length) {
+                    renderTodos()
+                }
+            }
+            init()
+        </script>
+    </body>
+</html>
